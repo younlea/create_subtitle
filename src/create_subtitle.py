@@ -5,6 +5,10 @@ import whisper
 from googletrans import Translator
 
 def extract_audio(video_path, audio_output_path):
+    if os.path.exists(audio_output_path):
+        print(f"오디오 파일이 이미 존재합니다: {audio_output_path}. 추출 단계를 건너뜁니다.")
+        return
+
     command = [
         'ffmpeg',
         '-i',
@@ -54,6 +58,7 @@ def create_srt_file(transcription_result, output_srt_path):
 def main():
     parser = argparse.ArgumentParser(description="일본어 동영상에서 한국어 자막을 생성합니다.")
     parser.add_argument("video_path", help="입력 동영상 파일 경로 (AVI 또는 MP4)")
+    parser.add_argument("--keep-audio", action="store_true", help="임시 오디오 파일을 삭제하지 않고 유지합니다.")
     args = parser.parse_args()
 
     video_path = args.video_path
@@ -62,7 +67,7 @@ def main():
     output_srt_path = f"{base_name}_ko.srt"
 
     try:
-        # 1. 오디오 추출
+        # 1. 오디오 추출 (이미 존재하면 건너뜀)
         extract_audio(video_path, audio_output_path)
 
         # 2. 음성 인식
@@ -76,8 +81,8 @@ def main():
     except Exception as e:
         print(f"오류 발생: {e}")
     finally:
-        # 임시 오디오 파일 삭제
-        if os.path.exists(audio_output_path):
+        # 임시 오디오 파일 삭제 (옵션에 따라)
+        if not args.keep_audio and os.path.exists(audio_output_path):
             os.remove(audio_output_path)
             print(f"임시 오디오 파일 삭제: {audio_output_path}")
 
