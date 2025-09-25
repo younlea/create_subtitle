@@ -8,7 +8,8 @@
 
 *   **오디오 추출**: 동영상 파일에서 오디오 트랙을 추출하여 임시 MP3 파일로 저장합니다.
 *   **음성 인식 (Speech-to-Text, STT)**: 추출된 일본어 오디오에서 음성을 텍스트로 변환하고, 각 대화의 시작 및 종료 시간을 포함한 타임스탬프 정보를 추출합니다. 이를 위해 OpenAI의 `Whisper` 모델을 사용합니다.
-    *   **텍스트 번역**: 음성 인식으로 변환된 일본어 텍스트를 한국어로 번역합니다. `googletrans` 라이브러리를 활용하여 Google Translate API를 사용합니다.
+    *   **텍스트 번역**: 현재 번역 기능은 제거되었습니다. 음성 인식으로 변환된 일본어 텍스트를 그대로 자막으로 사용합니다.
+
 *   **SRT 자막 파일 생성**: 번역된 한국어 텍스트와 `Whisper`에서 추출한 타임스탬프 정보를 결합하여 표준 SRT 형식의 자막 파일을 생성합니다.
 
 ## 3. 설치 방법
@@ -22,25 +23,53 @@ sudo apt-get update
 sudo apt-get install -y ffmpeg
 ```
 
-### 3.2. Python 의존성 설치 및 GPU 가속 설정
+### 3.2. Conda 환경 설정 및 Python 의존성 설치
 
-프로그램 실행에 필요한 파이썬 라이브러리들을 설치합니다. 특히 `Whisper` 모델의 음성 인식 속도를 향상시키기 위해 GPU(CUDA) 가속을 활용할 수 있습니다. 이를 위해 PyTorch를 CUDA 지원 버전으로 설치해야 합니다.
+안정적인 실행 환경을 위해 Conda 가상 환경을 사용하는 것을 권장합니다. 다음 단계를 따라 환경을 설정하고 필요한 라이브러리를 설치합니다.
 
-먼저 `requirements.txt` 파일을 생성하고 다음 내용을 추가합니다.
+1.  **Miniconda 설치 (설치되어 있지 않은 경우):**
+    ```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+bash miniconda.sh -b -p $HOME/miniconda3
+rm miniconda.sh
+$HOME/miniconda3/bin/conda init bash
+source ~/.bashrc
+    ```
 
-```
-openai-whisper
-deep-translator==1.9.0
-```
+2.  **Conda 환경 생성 및 활성화:**
+    ```bash
+conda create -n subtitle_env python=3.10 -y
+conda activate subtitle_env
+    ```
 
-그 다음, 터미널에서 다음 명령어를 실행하여 라이브러리들을 설치합니다. **사용자의 CUDA 버전에 맞는 PyTorch 버전을 설치해야 합니다.** 예를 들어, CUDA 12.1을 사용하는 경우:
+3.  **`requirements.txt` 파일 생성:**
+    다음 내용을 포함하는 `requirements.txt` 파일을 생성합니다.
+    ```
+torch==2.1.0
+torchaudio==2.1.0
+numpy==1.24.4
+googletrans
+    ```
 
-```bash
-pip install -r requirements.txt
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-```
+4.  **기본 의존성 설치:**
+    ```bash
+pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cpu
+    ```
+    **참고:** `torch`와 `torchaudio`는 CPU 버전으로 설치됩니다. GPU 가속을 사용하려면 `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121`와 같이 사용자의 CUDA 버전에 맞는 명령어를 사용해야 합니다. `create_subtitle.py` 스크립트에서는 `device="cpu"`로 명시되어 있습니다.
 
-**참고:** `torch` 설치 시 `--index-url` 뒤의 URL은 사용자의 CUDA 버전에 따라 변경될 수 있습니다. [PyTorch 공식 웹사이트](https://pytorch.org/get-started/locally/)에서 본인의 환경에 맞는 설치 명령어를 확인하십시오.
+5.  **`openai-whisper` 직접 설치:**
+    `openai-whisper`는 GitHub 저장소에서 직접 클론하여 개발 모드로 설치합니다. 이는 버전 호환성 문제를 해결하는 데 도움이 됩니다.
+    ```bash
+pip uninstall -y openai-whisper # 기존 설치된 whisper 제거
+git clone https://github.com/openai/whisper.git
+cd whisper
+pip install -e .
+cd .. # 프로젝트 루트 디렉토리로 돌아오기
+    ```
+
+**번역 라이브러리 (`googletrans`) 참고 사항:**
+
+`googletrans` 라이브러리는 Google Translate의 비공식 API를 사용하므로, 예기치 않은 오류나 서비스 중단이 발생할 수 있습니다. 만약 번역 단계에서 문제가 발생하면, 다른 번역 솔루션을 고려해야 합니다.
 
 
 ## 4. 사용 방법
