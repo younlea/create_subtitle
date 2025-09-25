@@ -1,2 +1,2 @@
 openai-whisper
-deep-translator==1.9.0
+googletrans==4.0.0-rc1
