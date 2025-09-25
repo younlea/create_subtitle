@@ -8,7 +8,7 @@
 
 *   **오디오 추출**: 동영상 파일에서 오디오 트랙을 추출하여 임시 MP3 파일로 저장합니다.
 *   **음성 인식 (Speech-to-Text, STT)**: 추출된 일본어 오디오에서 음성을 텍스트로 변환하고, 각 대화의 시작 및 종료 시간을 포함한 타임스탬프 정보를 추출합니다. 이를 위해 OpenAI의 `Whisper` 모델을 사용합니다.
-*   **텍스트 번역**: 음성 인식으로 변환된 일본어 텍스트를 한국어로 번역합니다. `deep-translator` 라이브러리를 활용하여 Google Translate API를 사용합니다.
+*   **텍스트 번역**: 음성 인식으로 변환된 일본어 텍스트를 한국어로 번역합니다. `deep-translator==1.9.0` 라이브러리를 활용하여 Google Translate API를 사용합니다.
 *   **SRT 자막 파일 생성**: 번역된 한국어 텍스트와 `Whisper`에서 추출한 타임스탬프 정보를 결합하여 표준 SRT 형식의 자막 파일을 생성합니다.
 
 ## 3. 설치 방법
@@ -30,7 +30,7 @@ sudo apt-get install -y ffmpeg
 
 ```
 openai-whisper
-deep-translator
+deep-translator==1.9.0
 ```
 
 그 다음, 터미널에서 다음 명령어를 실행하여 라이브러리들을 설치합니다. **사용자의 CUDA 버전에 맞는 PyTorch 버전을 설치해야 합니다.** 예를 들어, CUDA 12.1을 사용하는 경우:
@@ -62,5 +62,5 @@ python create_subtitle.py my_japanese_video.mp4
 ## 5. 참고 사항
 
 *   `Whisper` 모델은 기본적으로 `small` 모델을 사용합니다. 더 높은 정확도를 원하시면 `create_subtitle.py` 파일 내 `whisper.load_model("small")` 부분을 `"base"`, `"medium"`, `"large"` 등으로 변경할 수 있습니다. 단, 모델 크기가 커질수록 음성 인식 시간이 길어지고 더 많은 시스템 리소스가 필요합니다.
-*   번역은 `deep-translator` 라이브러리를 통해 Google Translate API를 사용합니다. 대량의 번역 요청 시 일시적인 제한이 발생할 수 있습니다.
+*   번역은 `deep-translator==1.9.0` 라이브러리를 통해 Google Translate API를 사용합니다. 대량의 번역 요청 시 일시적인 제한이 발생할 수 있습니다.
 *   임시 오디오 파일(`temp_audio_[동영상_파일_이름].mp3`)은 작업 완료 후 자동으로 삭제됩니다.
