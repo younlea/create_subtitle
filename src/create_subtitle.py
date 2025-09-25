@@ -2,7 +2,7 @@ import argparse
 import subprocess
 import os
 import whisper
-from deep_translator import GoogleTranslator
+from googletrans import Translator
 
 def extract_audio(video_path, audio_output_path):
     command = [
@@ -27,8 +27,8 @@ def transcribe_audio(audio_path):
     return result
 
 def translate_text(text, source_lang='ja', target_lang='ko'):
-    translator = GoogleTranslator(source=source_lang, target=target_lang)
-    translated_text = translator.translate(text)
+    translator = Translator()
+    translated_text = translator.translate(text, src=source_lang, dest=target_lang).text
     return translated_text
 
 def format_timestamp(seconds):
