@@ -28,44 +28,44 @@ sudo apt-get install -y ffmpeg
 안정적인 실행 환경을 위해 Conda 가상 환경을 사용하는 것을 권장합니다. 다음 단계를 따라 환경을 설정하고 필요한 라이브러리를 설치합니다.
 
 1.  **Miniconda 설치 (설치되어 있지 않은 경우):**
-    ```bash
+```bash
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 bash miniconda.sh -b -p $HOME/miniconda3
 rm miniconda.sh
 $HOME/miniconda3/bin/conda init bash
 source ~/.bashrc
-    ```
+```
 
 2.  **Conda 환경 생성 및 활성화:**
-    ```bash
+```bash
 conda create -n subtitle_env python=3.10 -y
 conda activate subtitle_env
-    ```
+```
 
 3.  **`requirements.txt` 파일 생성:**
     다음 내용을 포함하는 `requirements.txt` 파일을 생성합니다.
-    ```
+```
 torch==2.1.0
 torchaudio==2.1.0
 numpy==1.24.4
 googletrans
-    ```
+```
 
 4.  **기본 의존성 설치:**
-    ```bash
+```bash
 pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cpu
-    ```
+```
     **참고:** `torch`와 `torchaudio`는 CPU 버전으로 설치됩니다. GPU 가속을 사용하려면 `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121`와 같이 사용자의 CUDA 버전에 맞는 명령어를 사용해야 합니다. `create_subtitle.py` 스크립트에서는 `device="cpu"`로 명시되어 있습니다.
 
 5.  **`openai-whisper` 직접 설치:**
     `openai-whisper`는 GitHub 저장소에서 직접 클론하여 개발 모드로 설치합니다. 이는 버전 호환성 문제를 해결하는 데 도움이 됩니다.
-    ```bash
+```bash
 pip uninstall -y openai-whisper # 기존 설치된 whisper 제거
 git clone https://github.com/openai/whisper.git
 cd whisper
 pip install -e .
 cd .. # 프로젝트 루트 디렉토리로 돌아오기
-    ```
+```
 
 **번역 라이브러리 (`googletrans`) 참고 사항:**
 
