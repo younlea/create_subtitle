@@ -1,2 +1,2 @@
 openai-whisper
-deep-translator
+deep-translator==1.9.0
