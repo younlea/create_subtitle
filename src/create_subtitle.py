@@ -2,7 +2,7 @@ import argparse
 import subprocess
 import os
 import whisper
-from googletrans import Translator
+from googletrans import Translator # googletrans 라이브러리 재활성화
 
 def extract_audio(video_path, audio_output_path):
     if os.path.exists(audio_output_path):
@@ -24,12 +24,13 @@ def extract_audio(video_path, audio_output_path):
     print(f"오디오 추출 완료: {audio_output_path}")
 
 def transcribe_audio(audio_path):
-    model = whisper.load_model("small", device="cuda") # 작은 모델 사용, 필요시 "base", "medium", "large" 등으로 변경 가능. GPU(CUDA) 사용 명시.
+    model = whisper.load_model("small", device="cpu") # 작은 모델 사용, 필요시 "base", "medium", "large" 등으로 변경 가능. CPU 사용 명시.
     print("음성 인식 모델 로드 완료.")
     result = model.transcribe(audio_path, language="ja", word_timestamps=True)
     print("음성 인식 완료.")
     return result
 
+# 번역 기능 재활성화
 def translate_text(text, source_lang='ja', target_lang='ko'):
     translator = Translator()
     translated_text = translator.translate(text, src=source_lang, dest=target_lang).text
@@ -48,7 +49,7 @@ def create_srt_file(transcription_result, output_srt_path):
             start_time = format_timestamp(segment['start'])
             end_time = format_timestamp(segment['end'])
             original_text = segment['text'].strip()
-            translated_text = translate_text(original_text)
+            translated_text = translate_text(original_text) # 번역 함수 호출
 
             f.write(f"{i + 1}\n")
             f.write(f"{start_time} --> {end_time}\n")
@@ -64,7 +65,7 @@ def main():
     video_path = args.video_path
     base_name = os.path.splitext(os.path.basename(video_path))[0]
     audio_output_path = f"temp_audio_{base_name}.mp3"
-    output_srt_path = f"{base_name}_ko.srt"
+    output_srt_path = f"{base_name}_ko.srt" # 한국어 자막으로 저장
 
     try:
         # 1. 오디오 추출 (이미 존재하면 건너뜀)
