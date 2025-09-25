@@ -1,2 +1,3 @@
-openai-whisper
-googletrans==4.0.0-rc1
+torch==2.1.0
+torchaudio==2.1.0
+numpy==1.24.4
