@@ -54,7 +54,21 @@ python create_subtitle.py [동영상_파일_경로]
 **예시:**
 
 ```bash
+python create_subtitle.py [동영상_파일_경로]
+```
+
+**예시:**
+
+```bash
 python create_subtitle.py my_japanese_video.mp4
+```
+
+**음원 파일 유지 및 재활용:**
+
+개발 및 디버깅 편의를 위해 `--keep-audio` 옵션을 사용하여 동영상에서 추출된 임시 오디오 파일(`temp_audio_[동영상_파일_이름].mp3`)을 삭제하지 않고 유지할 수 있습니다. 이 옵션을 사용하면 스크립트 재실행 시 이미 존재하는 오디오 파일을 재활용하여 오디오 추출 단계를 건너뛰고 음성 인식부터 다시 시작할 수 있습니다.
+
+```bash
+python create_subtitle.py my_japanese_video.mp4 --keep-audio
 ```
 
 스크립트가 성공적으로 실행되면, 입력 동영상 파일과 동일한 디렉토리에 `[동영상_파일_이름]_ko.srt` 형식의 한국어 자막 파일이 생성됩니다. 예를 들어, `my_japanese_video.mp4`를 입력하면 `my_japanese_video_ko.srt` 파일이 생성됩니다.
